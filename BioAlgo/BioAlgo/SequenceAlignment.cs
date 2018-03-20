@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static System.Console;
 
 namespace BioAlgo
@@ -67,17 +63,17 @@ namespace BioAlgo
             return editDists[a.Length - 1, b.Length - 1];
         }
 
-        // Returns all alignments of two strings using matrix of edit distances
-        public void FindAllAlignmentsUsingEditDistance(string a, string b)
-        {
-            if (!(a.Equals(lastSeqs[0]) && b.Equals(lastSeqs[1])))
-                CountEditDistance(a, b);
+        //// Returns all alignments of two strings using matrix of edit distances
+        //public void FindAllAlignmentsUsingEditDistance(string a, string b)
+        //{
+        //    if (!(a.Equals(lastSeqs[0]) && b.Equals(lastSeqs[1])))
+        //        CountEditDistance(a, b);
 
-            int i = editDists.GetLength(0), j = editDists.GetLength(1);
-            while (i != 0 && j != 0)
-            {
-
-            }
-        }
+        //    int i = editDists.GetLength(0), j = editDists.GetLength(1);
+        //    while (i != 0 && j != 0)
+        //    {
+        //        edi
+        //    }
+        //}
     }
 }
