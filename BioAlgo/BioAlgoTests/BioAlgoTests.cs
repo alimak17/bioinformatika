@@ -12,7 +12,7 @@ namespace BioAlgoTests
         {
             string a = "blabla";
             string b = "patla";
-            int dist = SequenceAlignment.CountHammingDistance(a, b);
+            int dist = PairwiseSequenceAlignment.CountHammingDistance(a, b);
             Assert.AreEqual(-1, dist);
         }
 
@@ -24,7 +24,7 @@ namespace BioAlgoTests
             int dist;
             for (int i = 0; i < seqs.Length; i++)
             {
-                dist = SequenceAlignment.CountHammingDistance(seqs[0], seqs[i]);
+                dist = PairwiseSequenceAlignment.CountHammingDistance(seqs[0], seqs[i]);
                 Assert.AreEqual(expected[i], dist);
             }
         }
@@ -33,7 +33,7 @@ namespace BioAlgoTests
         public void CountEditDistance_SameString_ReturnsZero()
         {
             string a = "red";
-            int dist = SequenceAlignment.CountEditDistance(a, a);
+            int dist = PairwiseSequenceAlignment.CountEditDistance(a, a);
             Assert.AreEqual(0, dist);
         }
 
@@ -42,7 +42,7 @@ namespace BioAlgoTests
         {
             string a = "doll";
             string b = "poll";
-            int dist = SequenceAlignment.CountEditDistance(a, b);
+            int dist = PairwiseSequenceAlignment.CountEditDistance(a, b);
             Assert.AreEqual(1, dist);
         }
 
@@ -51,7 +51,7 @@ namespace BioAlgoTests
         {
             string a = "anna";
             string b = "ann";
-            int dist = SequenceAlignment.CountEditDistance(a, b);
+            int dist = PairwiseSequenceAlignment.CountEditDistance(a, b);
             Assert.AreEqual(1, dist);
         }
 
@@ -60,7 +60,7 @@ namespace BioAlgoTests
         {
             string a = "les";
             string b = "ples";
-            int dist = SequenceAlignment.CountEditDistance(a, b);
+            int dist = PairwiseSequenceAlignment.CountEditDistance(a, b);
             Assert.AreEqual(1, dist);
         }
     }

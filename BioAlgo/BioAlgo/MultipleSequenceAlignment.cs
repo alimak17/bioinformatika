@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Console;
+
 namespace BioAlgo
 {
-    class Program
+    public class MultipleSequenceAlignment
     {
-        static void Main(string[] args)
+        public void Parse(StringBuilder file)
         {
-           
+
         }
     }
 }

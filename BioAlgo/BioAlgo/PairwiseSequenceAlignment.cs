@@ -3,7 +3,7 @@ using static System.Console;
 
 namespace BioAlgo
 {
-    public class SequenceAlignment
+    public class PairwiseSequenceAlignment
     {
         static int[,] editDists;
         static string[] lastSeqs = new string[2];

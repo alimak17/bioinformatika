@@ -42,7 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SequenceAlignment.cs" />
+    <Compile Include="MultipleSequenceAlignment.cs" />
+    <Compile Include="PairwiseSequenceAlignment.cs" />
     <Compile Include="FastaParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -11,10 +11,16 @@ namespace BioAlgo
 {
     public class FastaParser
     {
+        // Parses descriptions and sequences of molecules from FASTA file.
+        // We suppose description of molecule begins with '>' followed by any characters.
+        // A sequence can contain any letter of alphabet. There can be empty line.
+        // Anything different is considered an error.
+        // Every sequence is stored uppercase.
+        // Returns null for an empty file.
         public static Dictionary<string, string> Parse(StreamReader fastaFile)
         {
-            Dictionary<string, string> FastaSeqs = new Dictionary<string, string>();
-            string name = "";
+            Dictionary<string, string> molecules = new Dictionary<string, string>();
+            string description = "";
             string sequence = "";
             string line;
             while ((line = fastaFile.ReadLine()) != null)
@@ -24,13 +30,13 @@ namespace BioAlgo
                 Match matchName = Regex.Match(line, @"\>(.*)");
                 if (matchName.Success)
                 {
-                    if (!name.Equals(""))
+                    if (!description.Equals(""))
                     {
-                        FastaSeqs.Add(name, sequence);
-                        name = "";
+                        molecules.Add(description, sequence.ToUpper());
+                        description = "";
                         sequence = "";
                     }
-                    name = matchName.Groups[1].Value;
+                    description = matchName.Groups[1].Value;
                     continue;
                 }
                 else
@@ -41,11 +47,14 @@ namespace BioAlgo
                         sequence += line;
                         continue;
                     }
-                    else throw new Exception("Incorrect input");
+                    else throw new InvalidDataException("Input contains forbidden character(s)"); 
                 }
             }
-            FastaSeqs.Add(name, sequence);
-            return FastaSeqs;
+            molecules.Add(description, sequence);
+            if (description.Equals("") && sequence.Equals(""))
+                return null;
+            else
+                return molecules;
         }
     }
 }

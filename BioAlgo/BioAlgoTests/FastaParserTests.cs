@@ -14,11 +14,10 @@ namespace BioAlgoTests
         [TestMethod]
         public void FastaParser_ParseOneSequence_ReturnDictionaryWithOneKeyAndValue()
         {
-            String path = $@"{folder}tmp.fasta";
+            String path = $@"{folder}one-entry.fasta";
             StreamReader file = new StreamReader(path);
             Dictionary<string, string> seqs = FastaParser.Parse(file);
             Assert.AreEqual(1, seqs.Keys.Count);
-            //Assert.AreEqual(1, seqs.Values.Count);
         }
 
         [TestMethod]
@@ -28,7 +27,6 @@ namespace BioAlgoTests
             StreamReader file = new StreamReader(path);
             Dictionary<string, string> seqs = FastaParser.Parse(file);
             Assert.AreEqual(11, seqs.Keys.Count);
-            //Assert.AreEqual(11, seqs.Values.Count);
         }
 
         [TestMethod]
@@ -38,7 +36,24 @@ namespace BioAlgoTests
             StreamReader file = new StreamReader(path);
             Dictionary<string, string> seqs = FastaParser.Parse(file);
             Assert.AreEqual(3, seqs.Keys.Count);
-            //Assert.AreEqual(11, seqs.Values.Count);
+        }
+
+        [TestMethod]
+        public void FastaParser_ParseEmptyFile_ReturnNull()
+        {
+            String path = $@"{folder}empty-file.fasta";
+            StreamReader file = new StreamReader(path);
+            Dictionary<string, string> seqs = FastaParser.Parse(file);
+            Assert.AreEqual(null, seqs);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidDataException), "Forbidden characters were added to molecules")]
+        public void FastaParser_ParseFileWith_ThrowsException()
+        {
+            String path = $@"{folder}forbidden-characters.fasta";
+            StreamReader file = new StreamReader(path);
+            Dictionary<string, string> seqs = FastaParser.Parse(file);
         }
     }
 }
