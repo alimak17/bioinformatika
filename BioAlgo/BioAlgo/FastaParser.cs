@@ -51,6 +51,7 @@ namespace BioAlgo
                 }
             }
             molecules.Add(description, sequence);
+            fastaFile.Close();
             if (description.Equals("") && sequence.Equals(""))
                 return null;
             else

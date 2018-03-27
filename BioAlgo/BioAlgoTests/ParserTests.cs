@@ -66,7 +66,7 @@ namespace BioAlgoTests
         }
 
         [TestMethod]
-        public void MSAParseClustal_ParseTwoSequencesWithCumulativeCountOfResidues_ReturnsListOfTuplesWithTwoEntries()
+        public void MSAParseClustal_ParseTwoSequencesWithCumulativeCountOfResiduesAndConservationInfo_ReturnsListOfTuplesWithTwoEntries()
         {
             String path = $@"{folder}two-sequences-with-cumulative-count-of-residues-and-conservation-info.aln";
             StreamReader file = new StreamReader(path);
@@ -75,7 +75,7 @@ namespace BioAlgoTests
         }
 
         [TestMethod]
-        public void MSAParseClustal_ParseThreeSequencesWithoutCumulativeCountOfResidues()
+        public void MSAParseClustal_ParseThreeSequencesWithoutCumulativeCountOfResiduesAndConservationInfoAndHeader_ReturnsListOfTuplesWithThreeEntries()
         {
             String path = $@"{folder}three-sequences-without-cumulative-count-of-residues-and-conservation-info-and-header.aln";
             StreamReader file = new StreamReader(path);
@@ -84,12 +84,21 @@ namespace BioAlgoTests
         }
 
         [TestMethod]
-        public void MSAParseClustal_ParseFourSequencesWithoutCumulativeCountOfResidues()
+        public void MSAParseClustal_ParseFourSequencesWithoutCumulativeCountOfResiduesAndConservationInfo_ReturnsListOfTuplesWithFourEntries()
         {
             String path = $@"{folder}four-sequences-without-cumulative-count-of-residues-and-conservation-info.aln";
             StreamReader file = new StreamReader(path);
             List<Tuple<string, string>> seqs = MSA.Parse(file);
             Assert.AreEqual(4, seqs.Count);
+        }
+
+        [TestMethod]
+        public void MSAParseClustal_InvalidInput_ReturnsNull()
+        {
+            String path = $@"{folder}invalid-input.aln";
+            StreamReader file = new StreamReader(path);
+            List<Tuple<string, string>> seqs = MSA.Parse(file);
+            Assert.AreEqual(null, seqs);
         }
     }
 }

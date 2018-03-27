@@ -82,6 +82,87 @@ namespace BioAlgoTests
             Assert.AreEqual(3, alignments.Count);
         }
 
-        
+        [TestMethod]
+        public void GetSequenceByPosition_EmptyList_ReturnsNull()
+        {
+            List<Tuple<string, string>> seqs = new List<Tuple<string, string>>();
+
+            MSA msa = new MSA(seqs);
+            string s = msa.GetSequence(0);
+            Assert.AreEqual(null, s);
+        }
+
+        [TestMethod]
+        public void GetSequenceByPosition_ChooseZeroPositonThreeSequences_ReturnsSequenceOnZeroPosition()
+        {
+            List<Tuple<string, string>> seqs = new List<Tuple<string, string>>();
+            seqs.Add(new Tuple<string, string>("als_1", "BBBC"));
+            seqs.Add(new Tuple<string, string>("als_2", "AABB"));
+            seqs.Add(new Tuple<string, string>("als_3", "CACA"));
+
+            MSA msa = new MSA(seqs);
+            string s = msa.GetSequence(0);
+            Assert.AreEqual("BBBC", s);
+        }
+
+        [TestMethod]
+        public void GetSequenceByPosition_ChooseLastPositonThreeSequences_ReturnsSequenceOnLastPosition()
+        {
+            List<Tuple<string, string>> seqs = new List<Tuple<string, string>>();
+            seqs.Add(new Tuple<string, string>("erk|po3", "TATA-"));
+            seqs.Add(new Tuple<string, string>("dfg|fd4", "GC-AA"));
+            seqs.Add(new Tuple<string, string>("pop|mp3", "CCTAA"));
+
+            MSA msa = new MSA(seqs);
+            string s = msa.GetSequence(2);
+            Assert.AreEqual("CCTAA", s);
+        }
+
+        [TestMethod]
+        public void GetSequenceByPosition_OutOfBound_ReturnsNull()
+        {
+            List<Tuple<string, string>> seqs = new List<Tuple<string, string>>();
+            seqs.Add(new Tuple<string, string>("abc", "WSARTTTAACLRA"));
+            seqs.Add(new Tuple<string, string>("bbc", "W----------RA"));
+
+            MSA msa = new MSA(seqs);
+            string s = msa.GetSequence(3);
+            Assert.AreEqual(null, s);
+        }
+
+        [TestMethod]
+        public void GetSequenceByID_EmptyList_ReturnsNull()
+        {
+            List<Tuple<string, string>> seqs = new List<Tuple<string, string>>();
+
+            MSA msa = new MSA(seqs);
+            string s = msa.GetSequence("ICE|SCREAM");
+            Assert.AreEqual(null, s);
+        }
+
+        [TestMethod]
+        public void GetSequenceByID_ChooseIXI_234hreeSequences_ReturnsSequenceForThatName()
+        {
+            List<Tuple<string, string>> seqs = new List<Tuple<string, string>>();
+            seqs.Add(new Tuple<string, string>("IXI_234", "SRPNRFAPTLMSSCITSTTGPPAWAGDRSHE"));
+            seqs.Add(new Tuple<string, string>("IXI_235", "SRPNRFAPTL--------TGPPAWAGDRSHE"));
+            seqs.Add(new Tuple<string, string>("IXI_236", "SRPPRFAPPLMSSCITSTTG-------RSHE"));
+
+            MSA msa = new MSA(seqs);
+            string s = msa.GetSequence("IXI_234");
+            Assert.AreEqual("SRPNRFAPTLMSSCITSTTGPPAWAGDRSHE", s);
+        }
+
+        [TestMethod]
+        public void GetSequenceByID_OutOfBound_ReturnsNull()
+        {
+            List<Tuple<string, string>> seqs = new List<Tuple<string, string>>();
+            seqs.Add(new Tuple<string, string>("xyz", "TSPASIR"));
+            seqs.Add(new Tuple<string, string>("bcd", "TSP--IR"));
+
+            MSA msa = new MSA(seqs);
+            string s = msa.GetSequence("abc");
+            Assert.AreEqual(null, s);
+        }
     }
 }

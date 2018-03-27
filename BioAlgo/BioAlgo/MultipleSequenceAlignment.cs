@@ -12,6 +12,14 @@ namespace BioAlgo
     // Class used for multiple sequence alignment
     public class MSA
     {
+        List<Tuple<string, string>> sequences;
+
+        public MSA(StreamReader clustalFile)
+            => sequences = Parse(clustalFile);
+
+        public MSA(List<Tuple<string, string>> seqs)
+            => sequences = seqs;
+
         public static List<Tuple<string, string>> Parse(StreamReader clustalFile)
         {
             List<Tuple<string,string>> seqs = new List<Tuple<string, string>>();
@@ -23,9 +31,6 @@ namespace BioAlgo
                 Match firstLine = Regex.Match(line, @"CLUSTAL.*");
                 if (firstLine.Success)
                     continue;
-                if (line.Length == 0)
-                    continue;
-                
 
                 Match seqPart = Regex.Match(line, @"([^\s]+)\s+([a-zA-Z-]+)\s*[0-9]*");
                 if (seqPart.Success)
@@ -45,33 +50,37 @@ namespace BioAlgo
                         seqs[foundAt] = new Tuple<string, string>(description, seqs[foundAt].Item2 + sequence);
                     else
                         seqs.Add(new Tuple<string, string>(description, sequence));
-
-                    continue;
                 }
-
-                Match conservation = Regex.Match(line, @"[\s*.:]+");
-                if (conservation.Success)
-                    continue;
             }
+            clustalFile.Close();
             if (seqs.Count == 0)
                 return null;
             else
                 return seqs;
         }
 
-        public void GetSequence(int position)
+        public string GetSequence(int position)
         {
-
+            if (position >= sequences.Count)
+                return null;
+            else
+                return sequences[position].Item2;
         }
 
-        public void GetSequence(string ID)
+        public string GetSequence(string ID)
         {
-
+            for (int i = 0; i < sequences.Count; i++)
+                if (sequences[i].Item1.Equals(ID))
+                    return sequences[i].Item2;
+            return null;
         }
 
-        public void GetColumn(int column)
+        public char[] GetColumn(int number)
         {
-
+            char[] column = new char[sequences.Count];
+            for (int i = 0; i < sequences.Count; i++)
+                column[i] = sequences[i].Item2[number];
+            return column;
         }
 
         public void GetScore(int[,] scoreMatrix)
