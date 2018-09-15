@@ -77,38 +77,24 @@ namespace BioAlgo
 
             void FindAllAlignments(int i, int j, string first, string second, ref List<Tuple<string, string>> alignments)
             {
-                //WriteLine($"i = {i}, j = {j}");
-                //WriteLine($"first = {first}, second = {second}");
                 if (i == 0 && j == 0)
                 {
-                    WriteLine("output:");
-                    WriteLine(Reverse(first));
-                    WriteLine(Reverse(second));
                     alignments.Add(new Tuple<string, string>(Reverse(first), Reverse(second)));
                 }
                 else
                 {
                     if (i > 0 && editDists[i - 1, j] + 1 == editDists[i, j])
                     {
-                        //WriteLine("Decreasing i.");
                         FindAllAlignments(i - 1, j, first + A[i - 1], second + "-", ref alignments);
-                        //WriteLine($"Returning to i = {i}, j = {j}");
-                        //WriteLine($"first = {first}, second = {second}");
                     }
                     if (j > 0 && editDists[i, j - 1] + 1 == editDists[i, j])
                     {
-                        //WriteLine("Decreasing j.");
                         FindAllAlignments(i, j - 1, first + "-", second + B[j - 1], ref alignments);
-                        //WriteLine($"Returning to i = {i}, j = {j}");
-                        //WriteLine($"first = {first}, second = {second}");
                     }
                     if (i > 0 && j > 0 && (editDists[i - 1, j - 1] + 1 == editDists[i, j] ||
                                            editDists[i - 1, j - 1] == editDists[i, j]))
                     {
-                        //WriteLine("Decreasing both i and j.");
                         FindAllAlignments(i - 1, j - 1, first + A[i - 1], second + B[j - 1], ref alignments);
-                        //WriteLine($"Returning to i = {i}, j = {j}");
-                        //WriteLine($"first = {first}, second = {second}");
                     }
                 }
             }
