@@ -1,6 +1,6 @@
-﻿using System;
+﻿using BioAlgo;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BioAlgo;
+using System;
 using System.Collections.Generic;
 
 namespace BioAlgoTests
@@ -68,28 +68,23 @@ namespace BioAlgoTests
         [TestMethod]
         public void FindAllAlignmentsUsingEditDistance_MoreAlignmentsUsingCountedTable_ReturnsListWithThreeElements()
         {
-            PSA.editDists = new int[,] { { 0, 1, 2, 3, 4, 5, 6, 7 },
-                                                               { 1, 1, 2, 3, 4, 5, 6, 7 },
-                                                               { 2, 2, 2, 2, 3, 4, 5, 6 },
-                                                               { 3, 3, 3, 3, 3, 4, 5, 6 },
-                                                               { 4, 4, 4, 4, 3, 4, 5, 6 },
-                                                               { 5, 5, 5, 5, 4, 4, 5, 6 },
-                                                               { 6, 6, 6, 6, 5, 4, 5, 6 },
-                                                               { 7, 7, 6, 7, 6, 5, 4, 5 }, };
-            PSA.lastSeqs[0] = "WRITERS";
-            PSA.lastSeqs[1] = "VINTNER";
             List<Tuple<string, string>> alignments = PSA.FindAllAlignmentsUsingEditDistance("WRITERS", "VITNERS");
-            Assert.AreEqual(3, alignments.Count);
+            Assert.AreEqual(5, alignments.Count);
+            CollectionAssert.Contains(alignments, new Tuple<string, string>("WRIT-ERS", "V-ITNERS"));
+            CollectionAssert.Contains(alignments, new Tuple<string, string>("WRIT-ERS", "-VITNERS"));
+            CollectionAssert.Contains(alignments, new Tuple<string, string>("WRI-TERS", "V-ITNERS"));
+            CollectionAssert.Contains(alignments, new Tuple<string, string>("WRI-TERS", "-VITNERS"));
+            CollectionAssert.Contains(alignments, new Tuple<string, string>("WRITERS", "VITNERS"));
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void GetSequenceByPosition_EmptyList_ReturnsNull()
         {
             List<Tuple<string, string>> seqs = new List<Tuple<string, string>>();
 
             MSA msa = new MSA(seqs);
             string s = msa.GetSequence(0);
-            Assert.AreEqual(null, s);
         }
 
         [TestMethod]
@@ -119,7 +114,8 @@ namespace BioAlgoTests
         }
 
         [TestMethod]
-        public void GetSequenceByPosition_OutOfBound_ReturnsNull()
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void GetSequenceByPosition_OutOfBound_ThrowsException()
         {
             List<Tuple<string, string>> seqs = new List<Tuple<string, string>>();
             seqs.Add(new Tuple<string, string>("abc", "WSARTTTAACLRA"));
@@ -127,7 +123,6 @@ namespace BioAlgoTests
 
             MSA msa = new MSA(seqs);
             string s = msa.GetSequence(3);
-            Assert.AreEqual(null, s);
         }
 
         [TestMethod]

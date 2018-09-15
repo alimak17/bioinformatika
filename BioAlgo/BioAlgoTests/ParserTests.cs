@@ -1,15 +1,15 @@
-﻿using System;
+﻿using BioAlgo;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BioAlgo;
-using System.IO;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace BioAlgoTests
 {
     [TestClass]
     public class ParserTests
     {
-        string folder = @"../../input/";
+        private string folder = @"../../input/";
 
         [TestMethod]
         public void FastaParser_ParseOneSequence_ReturnDictionaryWithOneKey()
@@ -39,12 +39,12 @@ namespace BioAlgoTests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(InvalidDataException))]
         public void FastaParser_ParseEmptyFile_ReturnNull()
         {
             String path = $@"{folder}empty-file.fasta";
             StreamReader file = new StreamReader(path);
             Dictionary<string, string> seqs = FastaParser.Parse(file);
-            Assert.AreEqual(null, seqs);
         }
 
         [TestMethod]

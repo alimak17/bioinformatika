@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using static System.Console;
 
 namespace BioAlgo
 {
     // Class used for multiple sequence alignment
     public class MSA
     {
-        List<Tuple<string, string>> sequences;
+        private List<Tuple<string, string>> sequences;
 
         public MSA(StreamReader clustalFile)
             => sequences = Parse(clustalFile);
@@ -22,7 +19,7 @@ namespace BioAlgo
 
         public static List<Tuple<string, string>> Parse(StreamReader clustalFile)
         {
-            List<Tuple<string,string>> seqs = new List<Tuple<string, string>>();
+            List<Tuple<string, string>> seqs = new List<Tuple<string, string>>();
             string description = "";
             string sequence = "";
             string line;
@@ -60,12 +57,7 @@ namespace BioAlgo
         }
 
         public string GetSequence(int position)
-        {
-            if (position >= sequences.Count)
-                return null;
-            else
-                return sequences[position].Item2;
-        }
+            => position < sequences.Count ? sequences[position].Item2 : throw new ArgumentOutOfRangeException("MSA does not contain so many sequences.");
 
         public string GetSequence(string ID)
         {
@@ -76,16 +68,10 @@ namespace BioAlgo
         }
 
         public char[] GetColumn(int number)
-        {
-            char[] column = new char[sequences.Count];
-            for (int i = 0; i < sequences.Count; i++)
-                column[i] = sequences[i].Item2[number];
-            return column;
-        }
+            => sequences[0].Item2.Length > number ? sequences.Select(x => x.Item2[number]).ToArray() : throw new ArgumentOutOfRangeException("Sequences are not so long");
 
         public void GetScore(int[,] scoreMatrix)
         {
-
         }
     }
 }

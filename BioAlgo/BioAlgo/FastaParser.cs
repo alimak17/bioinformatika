@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using static System.Console;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
 namespace BioAlgo
@@ -47,13 +42,13 @@ namespace BioAlgo
                         sequence += line;
                         continue;
                     }
-                    else throw new InvalidDataException("Input contains forbidden character(s)"); 
+                    else throw new InvalidDataException("Input contains forbidden character(s).");
                 }
             }
             molecules.Add(description, sequence);
             fastaFile.Close();
             if (description.Equals("") && sequence.Equals(""))
-                return null;
+                throw new InvalidDataException("Input does not contain sequence data in FASTA format.");
             else
                 return molecules;
         }
