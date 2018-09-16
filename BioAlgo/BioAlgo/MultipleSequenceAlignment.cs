@@ -6,6 +6,56 @@ using System.Text.RegularExpressions;
 
 namespace BioAlgo
 {
+    public class Matrix
+    {
+        public int n;
+        public Dictionary<string, int> index;
+        public int[,] mat;
+
+        public Matrix(String path)
+        {
+            StreamReader file = new StreamReader(path);
+            index = new Dictionary<string, int>();
+            string line = file.ReadLine();
+            string[] names = line.Split((char []) null, StringSplitOptions.RemoveEmptyEntries);
+            n = names.Length;
+            for (int i = 0; i < n; i++)
+            {
+                index.Add(names[i], i);
+            }
+            mat = new int[n, n];
+            int row = 0;
+            while ((line = file.ReadLine()) != null)
+            {
+                string[] values = line.Split((char []) null, StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 0; i < n; i++)
+                {
+                    mat[i, row] = int.Parse(values[i]);
+                }
+                row++;                
+            }
+            file.Close();
+        }
+
+        public int Value(string a, string b)
+        {
+            return mat[index[a], index[b]];
+        }
+
+        public override string ToString()
+        {
+            string ret = "";
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    ret += mat[i, j] + ", ";
+                }
+                ret += "\n";
+            }
+            return ret;
+        }
+    }
     // Class used for multiple sequence alignment
     public class MSA
     {

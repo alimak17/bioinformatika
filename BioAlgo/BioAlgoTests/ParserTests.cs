@@ -102,6 +102,15 @@ namespace BioAlgoTests
         }
 
         [TestMethod]
+        public void MSAMatrix_Blosum62()
+        {
+            Matrix m = new Matrix($@"{folder}blosum62.bla");
+            Console.WriteLine(m.ToString());
+            Assert.AreEqual(24, m.n);
+            Assert.AreEqual(-2, m.mat[3, 1]);
+        }
+
+        [TestMethod]
         public void PDBParse_SimpleInput()
         {
             String path = $@"{folder}simple.pdb";
