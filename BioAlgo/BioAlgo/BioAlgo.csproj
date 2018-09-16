@@ -45,6 +45,7 @@
     <Compile Include="MultipleSequenceAlignment.cs" />
     <Compile Include="PairwiseSequenceAlignment.cs" />
     <Compile Include="FastaParser.cs" />
+    <Compile Include="PDB.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

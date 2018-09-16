@@ -1,0 +1,14 @@
+MODEL        1
+ATOM      1  N   ALA A   1      11.104   6.134  -6.504  1.00  0.00           N
+ATOM      2  CA  ALA A   1      11.639   6.071  -5.147  1.00  0.00           C
+ATOM    293 1HG  GLU A  18     -14.861  -4.847   0.361  1.00  0.00           H
+ATOM    294 2HG  GLU A  18     -13.518  -3.769   0.084  1.00  0.00           H
+TER     295      GLU A  18                                 
+ENDMDL                                                              
+MODEL        2                                                       
+ATOM    296  N   ALA A   1      10.883   6.779  -6.464  1.00  0.00           N
+ATOM    297  CA  ALA A   1      11.451   6.531  -5.142  1.00  0.00           C
+ATOM    588 1HG  GLU A  18     -13.363  -4.163  -2.372  1.00  0.00           H
+ATOM    589 2HG  GLU A  18     -12.634  -3.023  -3.475  1.00  0.00           H
+TER     590      GLU A  18                
+ENDMDL

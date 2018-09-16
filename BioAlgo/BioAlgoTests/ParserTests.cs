@@ -100,5 +100,118 @@ namespace BioAlgoTests
             List<Tuple<string, string>> seqs = MSA.Parse(file);
             Assert.AreEqual(null, seqs);
         }
+
+        [TestMethod]
+        public void PDBParse_SimpleInput()
+        {
+            String path = $@"{folder}simple.pdb";
+            StreamReader file = new StreamReader(path);
+            List<PDB.Model> models = PDB.Parse(file);
+            foreach (PDB.Model model in models)
+            {
+                Console.WriteLine(model);
+            }
+            Assert.AreEqual(models.Count, 2);
+            Assert.AreEqual(models[0].NumOfChains(), 1);
+            Assert.AreEqual(models[0].NumOfResidues(0), 2);
+            Assert.AreEqual(models[0].NumOfAtoms(0, "1"), 2);
+            Assert.AreEqual(models[0].NumOfAtoms(0, "18"), 2);
+            Assert.AreEqual(models[1].NumOfChains(), 1);
+            Assert.AreEqual(models[1].NumOfResidues(0), 2);
+            Assert.AreEqual(models[1].NumOfAtoms(0, "1"), 2);
+            Assert.AreEqual(models[1].NumOfAtoms(0, "18"), 2);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(IndexOutOfRangeException))]
+        public void PDBParse_SimpleInput_FailsNumOfAtomsForMissingChain()
+        {
+            String path = $@"{folder}simple.pdb";
+            StreamReader file = new StreamReader(path);
+            List<PDB.Model> models = PDB.Parse(file);
+            Assert.AreEqual(models[0].NumOfChains(), 1);
+            Assert.AreEqual(models[0].NumOfResidues(0), 2);
+            Assert.AreEqual(models[0].NumOfResidues(1), 2);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void PDBParse_SimpleInput_FailsNumOfAtomsForMissingResidue()
+        {
+            String path = $@"{folder}simple.pdb";
+            StreamReader file = new StreamReader(path);
+            List<PDB.Model> models = PDB.Parse(file);
+            Assert.AreEqual(models[0].NumOfChains(), 1);
+            Assert.AreEqual(models[0].NumOfResidues(0), 2);
+            Assert.AreEqual(models[0].NumOfAtoms(0, "1"), 2);
+            Assert.AreEqual(models[0].NumOfAtoms(0, "18"), 2);
+            Assert.AreEqual(models[0].NumOfAtoms(0, "28"), 2);
+        }
+
+        [TestMethod]
+        public void PDBParse_ChainsInput()
+        {
+            String path = $@"{folder}chains.pdb";
+            StreamReader file = new StreamReader(path);
+            List<PDB.Model> models = PDB.Parse(file);
+            foreach (PDB.Model model in models)
+            {
+                Console.WriteLine(model);
+            }
+            Assert.AreEqual(models.Count, 1);
+            Assert.AreEqual(models[0].NumOfChains(), 2);
+            Assert.AreEqual(models[0].NumOfResidues(0), 2);
+            Assert.AreEqual(models[0].NumOfAtoms(0, "1"), 2);
+            Assert.AreEqual(models[0].NumOfAtoms(0, "18"), 2);
+            Assert.AreEqual(models[0].NumOfResidues(1), 1);
+            Assert.AreEqual(models[0].NumOfAtoms(1, "21"), 4);
+            Assert.AreEqual(models[0].NumOfHeteroAtoms(), 4);
+        }
+
+        [TestMethod]
+        public void PDBParse_ComputingChainsWidth()
+        {
+            String path = $@"{folder}chains.pdb";
+            StreamReader file = new StreamReader(path);
+            List<PDB.Model> models = PDB.Parse(file);
+            Assert.AreEqual(29.185455076116, models[0].chains[0].Width(), 0.00001);
+            Assert.AreEqual(27.1619058977827, models[0].chains[1].Width(), 0.00001);
+        }
+
+        [TestMethod]
+        public void PDBParse_ComputingResidueWidth()
+        {
+            String path = $@"{folder}chains.pdb";
+            StreamReader file = new StreamReader(path);
+            List<PDB.Model> models = PDB.Parse(file);
+            Assert.AreEqual(1.46001472595313, models[0].chains[0].GetResidue("1").Width(), 0.00001);
+            Assert.AreEqual(1.74426546144788, models[0].chains[0].GetResidue("18").Width(), 0.00001);
+            Assert.AreEqual(27.1619058977827, models[0].chains[1].GetResidue("21").Width(), 0.00001);
+        }
+
+        [TestMethod]
+        public void PDBParse_ComputesAtomsNearHeteroAtom()
+        {
+            String path = $@"{folder}chains.pdb";
+            StreamReader file = new StreamReader(path);
+            List<PDB.Model> models = PDB.Parse(file);
+            Assert.AreEqual(1, models[0].chains[0].AtomsNearHeteroAtom(models[0].hetero_atoms[0], 1.25).Count);
+            Assert.AreEqual(2, models[0].chains[0].AtomsNearHeteroAtom(models[0].hetero_atoms[0], 5.25).Count);
+            Assert.AreEqual(1, models[0].chains[1].AtomsNearHeteroAtom(models[0].hetero_atoms[0], 1.25).Count);
+            Assert.AreEqual(2, models[0].chains[1].AtomsNearHeteroAtom(models[0].hetero_atoms[0], 5.25).Count);
+            Assert.AreEqual(4, models[0].chains[1].AtomsNearHeteroAtom(models[0].hetero_atoms[0], 30).Count);
+            Assert.AreEqual(8, models[0].AtomsNearHeteroAtom(models[0].hetero_atoms[0], 30).Count);
+        }
+
+        [TestMethod]
+        public void PDBParse_ComputesResiduesNearHeteroAtom()
+        {
+            String path = $@"{folder}chains.pdb";
+            StreamReader file = new StreamReader(path);
+            List<PDB.Model> models = PDB.Parse(file);
+            Assert.AreEqual(1, models[0].chains[0].ResiduesNearHeteroAtom(models[0].hetero_atoms[0], 1.25).Count);
+            Assert.AreEqual(2, models[0].chains[0].ResiduesNearHeteroAtom(models[0].hetero_atoms[0], 30).Count);
+            Assert.AreEqual(3, models[0].ResiduesNearHeteroAtom(models[0].hetero_atoms[0], 30).Count);
+        }
     }
 }
