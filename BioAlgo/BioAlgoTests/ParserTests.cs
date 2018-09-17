@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace BioAlgoTests
 {
@@ -57,7 +58,7 @@ namespace BioAlgoTests
         }
 
         [TestMethod]
-        public void MSAParseClustal_ParseEmptyFile_ReturnsNull()
+        public void MSA_ParseClustal_ParseEmptyFile_ReturnsNull()
         {
             String path = $@"{folder}empty-file.aln";
             StreamReader file = new StreamReader(path);
@@ -66,7 +67,7 @@ namespace BioAlgoTests
         }
 
         [TestMethod]
-        public void MSAParseClustal_ParseTwoSequencesWithCumulativeCountOfResiduesAndConservationInfo_ReturnsListOfTuplesWithTwoEntries()
+        public void MSA_ParseClustal_ParseTwoSequencesWithCumulativeCountOfResiduesAndConservationInfo_ReturnsListOfTuplesWithTwoEntries()
         {
             String path = $@"{folder}two-sequences-with-cumulative-count-of-residues-and-conservation-info.aln";
             StreamReader file = new StreamReader(path);
@@ -75,7 +76,7 @@ namespace BioAlgoTests
         }
 
         [TestMethod]
-        public void MSAParseClustal_ParseThreeSequencesWithoutCumulativeCountOfResiduesAndConservationInfoAndHeader_ReturnsListOfTuplesWithThreeEntries()
+        public void MSA_ParseClustal_ParseThreeSequencesWithoutCumulativeCountOfResiduesAndConservationInfoAndHeader_ReturnsListOfTuplesWithThreeEntries()
         {
             String path = $@"{folder}three-sequences-without-cumulative-count-of-residues-and-conservation-info-and-header.aln";
             StreamReader file = new StreamReader(path);
@@ -84,7 +85,7 @@ namespace BioAlgoTests
         }
 
         [TestMethod]
-        public void MSAParseClustal_ParseFourSequencesWithoutCumulativeCountOfResiduesAndConservationInfo_ReturnsListOfTuplesWithFourEntries()
+        public void MSA_ParseClustal_ParseFourSequencesWithoutCumulativeCountOfResiduesAndConservationInfo_ReturnsListOfTuplesWithFourEntries()
         {
             String path = $@"{folder}four-sequences-without-cumulative-count-of-residues-and-conservation-info.aln";
             StreamReader file = new StreamReader(path);
@@ -93,7 +94,7 @@ namespace BioAlgoTests
         }
 
         [TestMethod]
-        public void MSAParseClustal_InvalidInput_ReturnsNull()
+        public void MSA_ParseClustal_InvalidInput_ReturnsNull()
         {
             String path = $@"{folder}invalid-input.aln";
             StreamReader file = new StreamReader(path);
@@ -102,12 +103,40 @@ namespace BioAlgoTests
         }
 
         [TestMethod]
-        public void MSAMatrix_Blosum62()
+        public void MSA_MatrixBlosum62()
         {
             Matrix m = new Matrix($@"{folder}blosum62.bla");
             Console.WriteLine(m.ToString());
             Assert.AreEqual(24, m.n);
             Assert.AreEqual(-2, m.mat[3, 1]);
+        }
+
+        [TestMethod]
+        public void MSA_ComputesScore()
+        {
+            Matrix m = new Matrix($@"{folder}blosum62.bla");
+            List<Tuple<string, string>> seq = new List<Tuple<string, string>>();
+            seq.Add(new Tuple<string, string>("A", "LPP-KNLLSALE-----P"));
+            seq.Add(new Tuple<string, string>("B", "LDNNVRSIPKEQAELWDP"));
+            seq.Add(new Tuple<string, string>("C", "AE--GPAPEAPAPAAPAP"));
+            MSA msa = new MSA(seq);
+            int[] scores = msa.GetScores(m, -1);
+            int total_score = scores.Sum();
+            CollectionAssert.AreEqual(scores, new int[]
+                { -4, 0, -8, -4, -14, -8, -4, -8, -4, -4, -14, 0, -6, -6, -6, -12, -8, 0 });
+            Assert.AreEqual(-110, total_score);
+            List<Tuple<int, int>> top_scores = msa.TopScores(scores, 5);
+            int[] top_values = new int[5];
+            int[] top_indexes = new int[5];
+            for (int i = 0; i < 5; i++)
+            {
+                top_indexes[i] = top_scores[i].Item1;
+                top_values[i] = top_scores[i].Item2;
+                Console.WriteLine($"top[{i}] = ({top_indexes[i]}, {top_values[i]})");
+
+                Assert.AreEqual(scores[top_indexes[i]], top_values[i]);
+            }
+            CollectionAssert.AreEqual(top_values, new int[]{ 0, 0, 0, -4, -4});
         }
 
         [TestMethod]

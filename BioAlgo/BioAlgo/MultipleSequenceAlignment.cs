@@ -9,35 +9,35 @@ namespace BioAlgo
     public class Matrix
     {
         public int n;
-        public Dictionary<string, int> index;
+        public Dictionary<char, int> index;
         public int[,] mat;
 
         public Matrix(String path)
         {
             StreamReader file = new StreamReader(path);
-            index = new Dictionary<string, int>();
+            index = new Dictionary<char, int>();
             string line = file.ReadLine();
-            string[] names = line.Split((char []) null, StringSplitOptions.RemoveEmptyEntries);
+            string[] names = line.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
             n = names.Length;
             for (int i = 0; i < n; i++)
             {
-                index.Add(names[i], i);
+                index.Add(names[i][0], i);
             }
             mat = new int[n, n];
             int row = 0;
             while ((line = file.ReadLine()) != null)
             {
-                string[] values = line.Split((char []) null, StringSplitOptions.RemoveEmptyEntries);
+                string[] values = line.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < n; i++)
                 {
                     mat[i, row] = int.Parse(values[i]);
                 }
-                row++;                
+                row++;
             }
             file.Close();
         }
 
-        public int Value(string a, string b)
+        public int Value(char a, char b)
         {
             return mat[index[a], index[b]];
         }
@@ -56,6 +56,7 @@ namespace BioAlgo
             return ret;
         }
     }
+
     // Class used for multiple sequence alignment
     public class MSA
     {
@@ -107,7 +108,9 @@ namespace BioAlgo
         }
 
         public string GetSequence(int position)
-            => position < sequences.Count ? sequences[position].Item2 : throw new ArgumentOutOfRangeException("MSA does not contain so many sequences.");
+            => position < sequences.Count ?
+                sequences[position].Item2 :
+                throw new ArgumentOutOfRangeException($"No sequence {position}, MSA contains only {sequences.Count} sequences.");
 
         public string GetSequence(string ID)
         {
@@ -117,11 +120,66 @@ namespace BioAlgo
             return null;
         }
 
-        public char[] GetColumn(int number)
-            => sequences[0].Item2.Length > number ? sequences.Select(x => x.Item2[number]).ToArray() : throw new ArgumentOutOfRangeException("Sequences are not so long");
-
-        public void GetScore(int[,] scoreMatrix)
+        public int GetLength()
         {
+            if (sequences.Count == 0) return 0;
+            return sequences[0].Item2.Length;
+        }
+
+        public char[] GetColumn(int number)
+            => GetLength() > number ?
+                sequences.Select(x => x.Item2[number]).ToArray() :
+                throw new ArgumentOutOfRangeException($"No column {number}, MSA contains only {GetLength()}.");
+
+        private int GetColumnScore(Matrix m, int gap, int column)
+        {
+            int score = 0;
+            foreach (Tuple<string, string> seq1 in sequences)
+            {
+                foreach (Tuple<string, string> seq2 in sequences)
+                {
+                    char c1 = seq1.Item2[column];
+                    char c2 = seq2.Item2[column];
+                    if (c1 == c2)
+                        continue;
+                    else if (c1 == '-' || c2 == '-')
+                        score += gap;
+                    else
+                        score += m.Value(c1, c2);
+                }
+            }
+            return score;
+        }
+
+        public int[] GetRangeScores(Matrix m, int gap, int first_column, int num_columns)
+        {
+            if (first_column + num_columns > GetLength())
+            {
+                throw new ArgumentOutOfRangeException(
+                    $"Cannot compute scores for range {first_column} to {first_column + num_columns - 1} " +
+                    $"since MSA contains only {num_columns}.");
+            }
+            int[] scores = new int[num_columns];
+            for (int i = 0; i < num_columns; i++)
+            {
+                scores[i] = GetColumnScore(m, gap, first_column + i);
+            }
+            return scores;
+        }
+
+        // Compute sum of pairs conservation score using substitution matrix m.
+        public int[] GetScores(Matrix m, int gap)
+        {
+            return GetRangeScores(m, gap, 0, GetLength());
+        }
+
+        public List<Tuple<int,int>> TopScores(int[] scores, int k)
+        {
+            List<Tuple<int, int>> s = new List<Tuple<int, int>>();
+            for (int i = 0; i < scores.Length; i++)
+                s.Add(new Tuple<int, int>(i, scores[i]));
+            s.Sort((a, b) => b.Item2.CompareTo(a.Item2));
+            return s.GetRange(0, k);
         }
     }
 }

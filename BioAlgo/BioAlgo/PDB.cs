@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using static System.Console;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Globalization;
+using System.IO;
 
 namespace BioAlgo
 {
@@ -12,7 +9,7 @@ namespace BioAlgo
     // http://www.wwpdb.org/documentation/file-format
     public class PDB
     {
-        static double AtomDistance(Atom a, Atom b)
+        private static double AtomDistance(Atom a, Atom b)
         {
             double x = a.x - b.x;
             double y = a.y - b.y;
@@ -20,12 +17,12 @@ namespace BioAlgo
             return Math.Sqrt(x * x + y * y + z * z);
         }
 
-        static double computeWidth(List<Atom> atoms)
+        private static double computeWidth(List<Atom> atoms)
         {
             double width = 0.0;
             for (int i = 0; i < atoms.Count; i++)
             {
-                for (int j = i+1; j < atoms.Count; j++)
+                for (int j = i + 1; j < atoms.Count; j++)
                 {
                     double distance = AtomDistance(atoms[i], atoms[j]);
                     if (distance > width)
@@ -74,7 +71,9 @@ namespace BioAlgo
                     double.TryParse(data.Substring(60, 6), NumberStyles.Any, en, out temperature);
                     element = data.Substring(76, 2).Trim();
                     charge = data.Substring(78, 2).Trim();
-                } catch (ArgumentOutOfRangeException) {
+                }
+                catch (ArgumentOutOfRangeException)
+                {
                 }
             }
 
@@ -105,7 +104,7 @@ namespace BioAlgo
                 }
                 return ret + "Residue end\n";
             }
-            
+
             // Compute width of the residue.
             public double Width()
             {
@@ -148,7 +147,6 @@ namespace BioAlgo
                 {
                     throw new ArgumentOutOfRangeException($"No residue '{number}'.");
                 }
-
             }
 
             public bool ContainsResidue(string number, out int index)
@@ -209,7 +207,8 @@ namespace BioAlgo
                 List<Residue> residues_near = new List<Residue>();
                 foreach (Residue residue in residues)
                 {
-                    if (residue.HasAtomsNearHeteroAtom(hetero_atom, distance)) {
+                    if (residue.HasAtomsNearHeteroAtom(hetero_atom, distance))
+                    {
                         residues_near.Add(residue);
                     }
                 }
@@ -243,7 +242,9 @@ namespace BioAlgo
             }
 
             public int NumOfChains() => chains.Count;
+
             public int NumOfHeteroAtoms() => hetero_atoms.Count;
+
             public int NumOfResidues(int chain_num)
             {
                 if (chain_num >= chains.Count)
@@ -274,7 +275,7 @@ namespace BioAlgo
 
             public List<Residue> ResiduesNearHeteroAtom(Atom hetero_atom, double distance)
             {
-                List<Residue> residues= new List<Residue>();
+                List<Residue> residues = new List<Residue>();
                 foreach (Chain chain in chains)
                 {
                     residues.AddRange(chain.ResiduesNearHeteroAtom(hetero_atom, distance));
@@ -283,7 +284,7 @@ namespace BioAlgo
             }
         }
 
-        List<Model> models;
+        private List<Model> models;
 
         public PDB(StreamReader pdbFile)
             => models = Parse(pdbFile);
@@ -296,26 +297,31 @@ namespace BioAlgo
             int opened_chain = -1;
             while ((line = pdbFile.ReadLine()) != null)
             {
-                switch (line.Substring(0,6))
+                switch (line.Substring(0, 6))
                 {
                     case "MODEL ":
-                        current_model.id = line.Substring(10,4);
+                        current_model.id = line.Substring(10, 4);
                         break;
+
                     case "ENDMDL":
                         models.Add(current_model);
                         current_model = new Model();
                         opened_chain = -1;
-                        break;                        
+                        break;
+
                     case "ATOM  ":
-                        if (opened_chain == -1) {
+                        if (opened_chain == -1)
+                        {
                             current_model.chains.Add(new Chain());
                             opened_chain = current_model.chains.Count - 1;
                         }
                         current_model.AddAtom(new Atom(line), opened_chain);
                         break;
+
                     case "HETATM":
                         current_model.hetero_atoms.Add(new Atom(line));
                         break;
+
                     case "TER   ":
                         opened_chain = -1;
                         break;
