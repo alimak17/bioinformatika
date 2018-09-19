@@ -52,10 +52,10 @@ namespace BioAlgo
             }  
         }
 
-        private static void ComputeConservationScores(string path, int top_k)
+        private static void ComputeConservationScores(string path, string matrix_path, int top_k)
         {
             WriteLine($"Parsing clustal file {path}.");
-            Matrix m = new Matrix("blosum62.bla");
+            Matrix m = new Matrix(matrix_path);
             StreamReader file = new StreamReader(path);
             MSA msa = new MSA(file);
             WriteLine($"Parsed {msa.sequences.Count} sequences:");
@@ -141,9 +141,9 @@ namespace BioAlgo
             {
                 WriteLine("Needs two arguments, the first one fasta, msa, or pdb, the second one a path to an input file.");
             }
-            else if (args[0] == "msa" && args.Length < 3)
+            else if (args[0] == "msa" && args.Length < 4)
             {
-                WriteLine("For msa needs two other arguments: input file and number of positions with top scores.");
+                WriteLine("For msa needs two other arguments: input file, scoring matrix, and number of positions with top scores.");
             }
             else
             {
@@ -156,7 +156,7 @@ namespace BioAlgo
                             ComputePairwiseSequenceAlignment(args[1], false);
                         break;
                     case "msa":
-                        ComputeConservationScores(args[1], int.Parse(args[2]));
+                        ComputeConservationScores(args[1], args[2], int.Parse(args[3]));
                         break;
                     case "pdb":
                         AnalyzeStructureOfPDB(args[1]);
