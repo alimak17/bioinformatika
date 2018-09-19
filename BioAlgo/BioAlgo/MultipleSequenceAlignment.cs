@@ -39,6 +39,16 @@ namespace BioAlgo
 
         public int Value(char a, char b)
         {
+            if (!index.ContainsKey(a))
+            {
+                Console.WriteLine($"Matrix does not contains score for {a}.");
+                return 0;
+            }
+            else if (!index.ContainsKey(b))
+            {
+                Console.WriteLine($"Matrix does not contains score for {b}.");
+                return 0;
+            }
             return mat[index[a], index[b]];
         }
 
