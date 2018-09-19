@@ -48,7 +48,7 @@ namespace BioAlgoTests
         }
 
         [TestMethod]
-        public void CountEdistDistance_OneDeletion_ReturnsOne()
+        public void CountEditDistance_OneDeletion_ReturnsOne()
         {
             string a = "anna";
             string b = "ann";
