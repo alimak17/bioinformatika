@@ -9,7 +9,7 @@ namespace BioAlgo
 {
     internal class Program
     {
-        private static void ComputePairwiseSequenceAlignment(string path)
+        private static void ComputePairwiseSequenceAlignment(string path, bool all_alignments)
         {
             WriteLine($"Parsing FASTA file {path}.");
             StreamReader file = new StreamReader(path);
@@ -37,13 +37,16 @@ namespace BioAlgo
                     {
                         WriteLine("Hamming distance: " + PSA.CountHammingDistance(seq, seq2));
                     }
-                    WriteLine("All optimal alignments: ");
-                    List<Tuple<string, string>> alignments = PSA.FindAllAlignmentsUsingEditDistance(seq, seq2);
-                    foreach (Tuple<string, string> alignment in alignments)
+                    if (all_alignments)
                     {
-                        WriteLine(alignment.Item1);
-                        WriteLine(alignment.Item2);
-                        WriteLine();
+                        WriteLine("All optimal alignments: ");
+                        List<Tuple<string, string>> alignments = PSA.FindAllAlignmentsUsingEditDistance(seq, seq2);
+                        foreach (Tuple<string, string> alignment in alignments)
+                        {
+                            WriteLine(alignment.Item1);
+                            WriteLine(alignment.Item2);
+                            WriteLine();
+                        }
                     }
                 }
             }  
@@ -129,6 +132,7 @@ namespace BioAlgo
         // Possible arguments:
         //  fasta [file] ... reads a fasta file, for each pair of sequences,
         //                   computes optimal alignment and Hamming distance (if of the same length).
+        //                   Use optional third parameter all to output all optimal alignments.
         //  msa [file] [k] ... reads a crustal file and computes conservation scores and shows top k scores.
         //  pdb [file] ... reads a PDB file and computes structural analysis of the protein.
         private static void Main(string[] args)
@@ -146,7 +150,10 @@ namespace BioAlgo
                 switch (args[0])
                 {
                     case "fasta":
-                        ComputePairwiseSequenceAlignment(args[1]);
+                        if (args.Length > 2 && args[2] == "all")
+                            ComputePairwiseSequenceAlignment(args[1], true);
+                        else
+                            ComputePairwiseSequenceAlignment(args[1], false);
                         break;
                     case "msa":
                         ComputeConservationScores(args[1], int.Parse(args[2]));
