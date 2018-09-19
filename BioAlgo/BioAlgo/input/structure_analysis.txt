@@ -1,0 +1,29 @@
+Analyzing ../../input/Hemoglobin_(1b0b).pdb.
+****oooooooooooooooooooooooooooo*****oo*ooo**o****o*ooooooooooooooooooooooooooo***ooo*oooooo*oo****o***oooooooooooooooooooo*ooo*oo**oo**o****
+
+Analysis done:
+Diameter of protein: 45,6754074749202.
+Count of surface amino acids: 39.
+Count of buried amino acids: 102.
+Ratio of surface and buried amino acids: 0,382352941176471.
+Surface amino acids: 2x LEU, 3x SER, 12x ALA, 4x ASP, 1x HIS, 10x GLY, 1x ASN, 1x LYS, 2x ARG, 2x MET, 1x PRO, 
+Buried amino acids: 5x GLN, 10x LYS, 4x ASP, 5x ASN, 7x VAL, 7x SER, 4x TRP, 16x ALA, 6x GLY, 5x THR, 2x PRO, 5x GLU, 10x PHE, 4x MET, 7x LEU, 1x CYS, 1x HIS, 2x ILE, 1x TYR, 
+Count of surface polar amino acids: 4.
+Count of buried polar amino acids: 24.
+Ratio of surface and buried polar amino acids: 0,166666666666667.
+
+Analyzing ../../input/A2a_receptor.pdb.
+***oo**oo*oo**ooooooooooooo****ooooooooooooooooooooooooooooooooo**oooooooooooooooooooooooooooooooooooooo**o**ooo**oooooooooooooooooooooooooooooooooooo*****oooooooooooooooooooooooooooooooooooooooooooooooo*********oooooooooooooooo*ooooooooooooooooo**oooo**ooooooooooooooooooooooo*ooo*oooooo*ooo*oooooooooo******
+
+Analysis done:
+Diameter of protein: 84,2676912820091.
+Count of surface amino acids: 49.
+Count of buried amino acids: 260.
+Ratio of surface and buried amino acids: 0,188461538461538.
+Surface amino acids: 6x SER, 3x VAL, 3x THR, 2x ALA, 8x LEU, 4x ASN, 2x PHE, 3x CYS, 3x ARG, 4x GLY, 4x GLN, 2x LYS, 1x MET, 2x GLU, 1x TRP, 1x TYR, 
+Buried amino acids: 10x TYR, 28x ILE, 7x GLU, 31x LEU, 35x ALA, 12x GLY, 10x ASN, 25x VAL, 11x CYS, 5x TRP, 6x GLN, 8x THR, 19x PHE, 10x SER, 4x ASP, 11x PRO, 7x HIS, 10x ARG, 6x LYS, 5x MET, 
+Count of surface polar amino acids: 21.
+Count of buried polar amino acids: 55.
+Ratio of surface and buried polar amino acids: 0,381818181818182.
+
+

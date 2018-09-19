@@ -228,17 +228,17 @@ namespace BioAlgoTests
         }
 
         [TestMethod]
-        public void PDBParse_ComputesAtomsNearHeteroAtom()
+        public void PDBParse_ComputesAtomsNearAtom()
         {
             String path = $@"{folder}chains.pdb";
             StreamReader file = new StreamReader(path);
             List<PDB.Model> models = PDB.Parse(file);
-            Assert.AreEqual(1, models[0].chains[0].AtomsNearHeteroAtom(models[0].hetero_atoms[0], 1.25).Count);
-            Assert.AreEqual(2, models[0].chains[0].AtomsNearHeteroAtom(models[0].hetero_atoms[0], 5.25).Count);
-            Assert.AreEqual(1, models[0].chains[1].AtomsNearHeteroAtom(models[0].hetero_atoms[0], 1.25).Count);
-            Assert.AreEqual(2, models[0].chains[1].AtomsNearHeteroAtom(models[0].hetero_atoms[0], 5.25).Count);
-            Assert.AreEqual(4, models[0].chains[1].AtomsNearHeteroAtom(models[0].hetero_atoms[0], 30).Count);
-            Assert.AreEqual(8, models[0].AtomsNearHeteroAtom(models[0].hetero_atoms[0], 30).Count);
+            Assert.AreEqual(1, models[0].chains[0].AtomsNearAtom(models[0].hetero_atoms[0], 1.25).Count);
+            Assert.AreEqual(2, models[0].chains[0].AtomsNearAtom(models[0].hetero_atoms[0], 5.25).Count);
+            Assert.AreEqual(1, models[0].chains[1].AtomsNearAtom(models[0].hetero_atoms[0], 1.25).Count);
+            Assert.AreEqual(2, models[0].chains[1].AtomsNearAtom(models[0].hetero_atoms[0], 5.25).Count);
+            Assert.AreEqual(4, models[0].chains[1].AtomsNearAtom(models[0].hetero_atoms[0], 30).Count);
+            Assert.AreEqual(8, models[0].AtomsNearAtom(models[0].hetero_atoms[0], 30).Count);
         }
 
         [TestMethod]
@@ -247,9 +247,9 @@ namespace BioAlgoTests
             String path = $@"{folder}chains.pdb";
             StreamReader file = new StreamReader(path);
             List<PDB.Model> models = PDB.Parse(file);
-            Assert.AreEqual(1, models[0].chains[0].ResiduesNearHeteroAtom(models[0].hetero_atoms[0], 1.25).Count);
-            Assert.AreEqual(2, models[0].chains[0].ResiduesNearHeteroAtom(models[0].hetero_atoms[0], 30).Count);
-            Assert.AreEqual(3, models[0].ResiduesNearHeteroAtom(models[0].hetero_atoms[0], 30).Count);
+            Assert.AreEqual(1, models[0].chains[0].ResiduesNearAtom(models[0].hetero_atoms[0], 1.25).Count);
+            Assert.AreEqual(2, models[0].chains[0].ResiduesNearAtom(models[0].hetero_atoms[0], 30).Count);
+            Assert.AreEqual(3, models[0].ResiduesNearAtom(models[0].hetero_atoms[0], 30).Count);
         }
     }
 }

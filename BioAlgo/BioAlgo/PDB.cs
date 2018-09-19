@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Numerics;
 
 namespace BioAlgo
 {
@@ -88,11 +89,13 @@ namespace BioAlgo
         public class Residue
         {
             public string number;
+            public string name;
             public List<Atom> atoms = new List<Atom>();
 
-            public Residue(string number)
+            public Residue(string number, string name)
             {
                 this.number = number;
+                this.name = name;
             }
 
             public override string ToString()
@@ -111,11 +114,11 @@ namespace BioAlgo
                 return computeWidth(atoms);
             }
 
-            public bool HasAtomsNearHeteroAtom(Atom hetero_atom, double distance)
+            public bool HasAtomsNearAtom(Atom atom, double distance)
             {
-                foreach (Atom atom in atoms)
+                foreach (Atom residue_atom in atoms)
                 {
-                    if (AtomDistance(hetero_atom, atom) <= distance)
+                    if (AtomDistance(atom, residue_atom) <= distance)
                         return true;
                 }
                 return false;
@@ -168,7 +171,7 @@ namespace BioAlgo
                 int index;
                 if (!ContainsResidue(atom.resSeq, out index))
                 {
-                    residues.Add(new Residue(atom.resSeq));
+                    residues.Add(new Residue(atom.resSeq, atom.resName));
                     index = residues.Count - 1;
                 }
                 residues[index].atoms.Add(atom);
@@ -188,26 +191,26 @@ namespace BioAlgo
                 return computeWidth(all_atoms);
             }
 
-            public List<Atom> AtomsNearHeteroAtom(Atom hetero_atom, double distance)
+            public List<Atom> AtomsNearAtom(Atom atom, double distance)
             {
                 List<Atom> atoms = new List<Atom>();
                 foreach (Residue residue in residues)
                 {
-                    foreach (Atom atom in residue.atoms)
+                    foreach (Atom residue_atom in residue.atoms)
                     {
-                        if (AtomDistance(hetero_atom, atom) <= distance)
-                            atoms.Add(atom);
+                        if (AtomDistance(atom, residue_atom) <= distance)
+                            atoms.Add(residue_atom);
                     }
                 }
                 return atoms;
             }
 
-            public List<Residue> ResiduesNearHeteroAtom(Atom hetero_atom, double distance)
+            public List<Residue> ResiduesNearAtom(Atom atom, double distance)
             {
                 List<Residue> residues_near = new List<Residue>();
                 foreach (Residue residue in residues)
                 {
-                    if (residue.HasAtomsNearHeteroAtom(hetero_atom, distance))
+                    if (residue.HasAtomsNearAtom(atom, distance))
                     {
                         residues_near.Add(residue);
                     }
@@ -263,24 +266,135 @@ namespace BioAlgo
                 return chains[chain_num].GetResidue(residue_number).atoms.Count;
             }
 
-            public List<Atom> AtomsNearHeteroAtom(Atom hetero_atom, double distance)
+            public List<Atom> AtomsNearAtom(Atom atom, double distance)
             {
                 List<Atom> atoms = new List<Atom>();
                 foreach (Chain chain in chains)
                 {
-                    atoms.AddRange(chain.AtomsNearHeteroAtom(hetero_atom, distance));
+                    atoms.AddRange(chain.AtomsNearAtom(atom, distance));
                 }
                 return atoms;
             }
 
-            public List<Residue> ResiduesNearHeteroAtom(Atom hetero_atom, double distance)
+            public List<Residue> ResiduesNearAtom(Atom atom, double distance)
             {
                 List<Residue> residues = new List<Residue>();
                 foreach (Chain chain in chains)
                 {
-                    residues.AddRange(chain.ResiduesNearHeteroAtom(hetero_atom, distance));
+                    residues.AddRange(chain.ResiduesNearAtom(atom, distance));
                 }
                 return residues;
+            }
+
+            private List<Atom> GetCAAtoms()
+            {
+                List<Atom> ca_atoms = new List<Atom>();
+                foreach (Chain chain in chains)
+                {
+                    foreach (Residue residue in chain.residues)
+                    {
+                        foreach (Atom atom in residue.atoms)
+                        {
+                            if (atom.name == "CA")
+                            {
+                                ca_atoms.Add(atom);
+                            }
+                        }
+                    }
+                }
+                return ca_atoms;
+            }
+
+            private int ComputeOptimalHalfSphereNeighbors(Atom atom)
+            {
+                List<Atom> near_atoms = AtomsNearAtom(atom, 12.0);
+                Random random = new Random();
+                int min_neighbors = int.MaxValue;
+                for (int i = 0; i < 10000; i++)
+                {
+                    int neighbors = 0;
+                    Vector3 dir = new Vector3((float) random.NextDouble(),
+                                              (float) random.NextDouble(),
+                                              (float) random.NextDouble());
+                    foreach (Atom near_atom in near_atoms)
+                    {
+                        Vector3 atom_vec = new Vector3((float) (near_atom.x - atom.x), 
+                                                       (float) (near_atom.y - atom.y),
+                                                       (float) (near_atom.z - atom.z));
+                        if (Vector3.Dot(dir, atom_vec) > 0.0) neighbors++;
+                    }
+                    if (neighbors < min_neighbors)
+                    {
+                        min_neighbors = neighbors;
+                    }
+                }
+                return min_neighbors;               
+            }
+
+            // Returns lists of residue numbers for surface and buried amino acids.
+            public Tuple<List<string>, List<string>> ComputeSurfaceAndBuriedAminoAcids()
+            {
+                List<Atom> ca_atoms = GetCAAtoms();
+                List<string> surface = new List<string>();
+                List<string> buried = new List<string>();
+                foreach (Atom atom in ca_atoms)
+                {
+                    int neighbors_in_half_sphere = ComputeOptimalHalfSphereNeighbors(atom);
+                    if (neighbors_in_half_sphere <= 30) // magic constant
+                    {
+                        surface.Add(atom.resSeq);
+                        Console.Write("*");
+                    }
+                    else
+                    {
+                        buried.Add(atom.resSeq);
+                        Console.Write("o");
+                    }
+                }
+                Console.WriteLine();
+                return new Tuple<List<string>, List<string>>(surface, buried);
+            }
+
+            public List<string> ResiduesToAminoAcidNames(List<string> numbers)
+            {
+                List<string> output = new List<string>();
+                foreach (string number in numbers)
+                {
+                    foreach (Chain c in chains)
+                    {
+                        foreach (Residue r in c.residues)
+                        {
+                            if (r.number == number)
+                            {
+                                output.Add(r.name);
+                                break;
+                            }
+                        }
+                    }
+                }
+                return output;
+
+            }
+
+            public List<string> SelectPolarAminoAcids(List<string> numbers)
+            {
+                List<string> output = new List<string>();
+                List<string> polar_names = new List<string> { "SER", "THR", "CYS", "ASN", "GLN", "TYR" };
+                foreach (string number in numbers)
+                {
+                    foreach (Chain c in chains)
+                    {
+                        foreach (Residue r in c.residues)
+                        {
+                            if (r.number == number && polar_names.Contains(r.name))
+                            {
+                                output.Add(number);
+                                break;
+                            }
+                        }
+                    }
+                }
+                return output;
             }
         }
 
@@ -297,9 +411,14 @@ namespace BioAlgo
             int opened_chain = -1;
             while ((line = pdbFile.ReadLine()) != null)
             {
-                switch (line.Substring(0, 6))
+                string prefix = line.Trim();
+                if (line.Length >= 6)
                 {
-                    case "MODEL ":
+                    prefix = line.Substring(0, 6).Trim();
+                }
+                switch (prefix)
+                {
+                    case "MODEL":
                         current_model.id = line.Substring(10, 4);
                         break;
 
@@ -309,7 +428,7 @@ namespace BioAlgo
                         opened_chain = -1;
                         break;
 
-                    case "ATOM  ":
+                    case "ATOM":
                         if (opened_chain == -1)
                         {
                             current_model.chains.Add(new Chain());
@@ -322,7 +441,7 @@ namespace BioAlgo
                         current_model.hetero_atoms.Add(new Atom(line));
                         break;
 
-                    case "TER   ":
+                    case "TER":
                         opened_chain = -1;
                         break;
                 }
@@ -338,5 +457,6 @@ namespace BioAlgo
             else
                 return models;
         }
+
     }
 }
