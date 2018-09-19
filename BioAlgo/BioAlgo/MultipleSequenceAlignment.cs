@@ -60,7 +60,7 @@ namespace BioAlgo
     // Class used for multiple sequence alignment
     public class MSA
     {
-        private List<Tuple<string, string>> sequences;
+        public List<Tuple<string, string>> sequences;
 
         public MSA(StreamReader clustalFile)
             => sequences = Parse(clustalFile);
